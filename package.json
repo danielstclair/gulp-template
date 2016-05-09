@@ -53,6 +53,7 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.3.1",
     "wiredep": "^3.0.0-beta"
+<<<<<<< HEAD
   },
   "dependencies": {
     "axios": "^0.11.0",
@@ -62,5 +63,7 @@
     "react-router": "^2.4.0",
     "redux": "^3.5.2",
     "redux-promise": "^0.5.3"
+=======
+>>>>>>> aa0a37100b5d37725bee9a35a297e642934d78ee
   }
 }
