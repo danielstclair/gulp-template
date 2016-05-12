@@ -112,7 +112,7 @@ gulp.task('watch', function (){
     gulp.watch([path.join(PATHS.app_styles, '**/*.scss') ], ['styles']);
 });
 // 
-gulp.task('default', ['watch', 'watchDev', 'styles', 'browser-sync']);
+gulp.task('default', ['watchDev', 'watch', 'styles', 'browser-sync']);
 
 gulp.task('mocha', function() {
   return gulp.src('test/*.js', {read: false})
