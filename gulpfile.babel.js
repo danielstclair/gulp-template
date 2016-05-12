@@ -59,24 +59,8 @@ gulp.task('styles', () => {
         }));
 });
 
-gulp.task('watchDev', function() {
-    buildApp();
-});
-
-var bundler;
-
-function buildApp () {
-  bundler = bundler || watchify(browserify({
-    entries: 'client/assets/scripts/main.js',
-    debug: true,
-    transform: [babelify],
-    cache: {},
-    packageCache: {},
-    fullPaths: true //You can change this 
-  }))
-
-  return bundler
-  .bundle()
+function bundle(b) {
+  b.bundle()
   .on('error', (err) => {
     $.gutil.log($.gutil.colors.red('Browserify'), err.toString());
     $.gutil.beep();
@@ -85,8 +69,27 @@ function buildApp () {
   .pipe(buffer())
   .pipe($.sourcemaps.init({loadMaps: true}))
   .pipe($.sourcemaps.write('./'))
-  .pipe(gulp.dest('client/assets/scripts'));
-} 
+  .pipe(gulp.dest('./client/assets/scripts'))
+  .pipe(reload({
+      stream: true
+  }));
+}
+
+gulp.task('watchDev', function() {
+  let b = browserify({
+    cache: {},
+    packageCache: {},
+    plugin: [watchify],
+    debug: true,
+    entries: ['./client/assets/scripts/main.js']
+  });
+  b.on('log', (message) => {
+    $.gutil.log($.gutil.colors.green('Browserify'), message);
+  });
+  b.on('update', bundle.bind(this, b));
+  b.transform(babelify, {presets: ['es2015', 'react', 'stage-1']});
+  bundle(b);
+});
 
 /* BROWSER SYNC */
 gulp.task('browser-sync', function() {
@@ -104,11 +107,9 @@ gulp.task('browser-sync', function() {
 /* GULP TASKS */
 gulp.task('watch', function (){
     gulp.watch([
-        'client/*.html',
-        'client/assets/scripts/bundle.js'
+        'client/*.html'
     ]).on('change', reload);
     gulp.watch([path.join(PATHS.app_styles, '**/*.scss') ], ['styles']);
-    gulp.watch([path.join(PATHS.app_scripts, '**/*.js')], ['watchDev']);
 });
 // 
 gulp.task('default', ['watch', 'watchDev', 'styles', 'browser-sync']);
